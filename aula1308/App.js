@@ -1,7 +1,9 @@
 import { View, Text, StyleSheet } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function App() {
   return (
+    <SafeAreaView>
     <View style={{height: 500}}>
       <View style={estilos.centralizar}>
         <Text style = {estilos.textoRoxo}>Universal React with Expo</Text>
@@ -13,8 +15,9 @@ export default function App() {
     <View style={estilos.caixaret}></View>
     <View style={estilos.bola}></View>
     </View>
-    
+
     </View>
+    </SafeAreaView>
   );
 }
 
@@ -50,6 +53,6 @@ const estilos = StyleSheet.create({
   centralizar:{
     flex: 1,
     alignItems: "center",
-    justifyContent: "space-between"
+    justifyContent: "flex-start"
   },
 })
