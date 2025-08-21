@@ -6,61 +6,68 @@ export default function App() {
     <SafeAreaView style={estilos.tela}>
       <View style={estilos.ajuste}>
         <View>
-          <Text style={estilos.titulo}>Olá, Estudante</Text>
-          <Text style={estilos.subtitulo}>Bem-Vindo ao seu painel</Text>
+          <Text style={estilos.titulo}>Quadro de tarefas</Text>
+          <Text style={estilos.subtitulo}>Kanban estático</Text>
         </View>
       </View>
 
       <View>
-        <Text style={estilos.menutitulo}>Menu</Text>
-
-        <View style={estilos.ajustaBotao}>
-          <TouchableOpacity style={[estilos.botao, { backgroundColor: "#2c86e0ff" }]}>
-            <Text style={estilos.textoBotao}>NOTAS</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[estilos.botao, { backgroundColor: "#2dc935ff" }]}>
-            <Text style={estilos.textoBotao}>AULAS</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[estilos.botao, { backgroundColor: "#af22d6ff" }]}>
-            <Text style={estilos.textoBotao}>AVISOS</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={estilos.menutitulo}>Quadro</Text>
       </View>
 
-      <View>
-        <Text style={estilos.menutitulo}>Próximas atividades</Text>
-      </View>
-      <ScrollView style={estilos.ajustesv}>
+
+      <ScrollView horizontal style={estilos.ajustesv}>
         <View style={estilos.ajustecard}>
+          <Text style={estilos.textocard}>teste</Text>
           <View style={estilos.card}>
             <Text style={estilos.titulocard}>Trabalho de Matemática</Text>
-            <Text style={estilos.subcard}>Entrega: 20/08</Text>
           </View>
           <View style={estilos.card}>
             <Text style={estilos.titulocard}>Prova de Física (Importante)</Text>
-            <Text style={estilos.subcard}>Data: 22/08</Text>
           </View>
           <View style={estilos.card}>
             <Text style={estilos.titulocard}>Leitura de História</Text>
-            <Text style={estilos.subcard}>Cap. 3 e 4</Text>
           </View>
           <View style={estilos.card}>
             <Text style={estilos.titulocard}>Educação física</Text>
-            <Text style={estilos.subcard}>Levar chuteira</Text>
+          </View>
+        </View>
+
+        <View style={estilos.ajustecard}>
+          <View style={estilos.card}>
+            <Text style={estilos.titulocard}>Trabalho de Matemática</Text>
+          </View>
+          <View style={estilos.card}>
+            <Text style={estilos.titulocard}>Prova de Física (Importante)</Text>
+          </View>
+          <View style={estilos.card}>
+            <Text style={estilos.titulocard}>Leitura de História</Text>
+          </View>
+          <View style={estilos.card}>
+            <Text style={estilos.titulocard}>Educação física</Text>
+          </View>
+        </View>
+
+        <View style={estilos.ajustecard}>
+          <View style={estilos.card}>
+            <Text style={estilos.titulocard}>Trabalho de Matemática</Text>
+          </View>
+          <View style={estilos.card}>
+            <Text style={estilos.titulocard}>Prova de Física (Importante)</Text>
+          </View>
+          <View style={estilos.card}>
+            <Text style={estilos.titulocard}>Leitura de História</Text>
+          </View>
+          <View style={estilos.card}>
+            <Text style={estilos.titulocard}>Educação física</Text>
           </View>
         </View>
 
       </ScrollView>
       <View>
-        <Text style={estilos.ajustecpa}>Chamada para ação</Text>
-        <View style={estilos.textocpa}>
-          <Text>Adquira um novo curso e continue aprendendo!</Text>
-          <TouchableOpacity style={[estilos.botaocpa, { backgroundColor: "#af22d6ff" }]}>
-            <Text style={estilos.textoBotao}>COMPRAR CURSO</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={[estilos.botaocpa, { backgroundColor: "#af22d6ff" }]}>
+          <Text style={estilos.textoBotao}>COMPRAR CURSO</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
 
@@ -112,7 +119,16 @@ const estilos = StyleSheet.create({
     fontSize: 14,
   },
   ajustecard: {
+    height: 600,
     padding: 10,
+    backgroundColor: "gray"
+  },
+
+  textocard: {
+    fontWeight: "900",
+    fontSize: 15,
+    textAlign: "center",
+    marginBottom: 20
   },
   card: {
     backgroundColor: "#F5F5F5",
@@ -150,7 +166,7 @@ const estilos = StyleSheet.create({
     marginTop: 10
   },
   ajustesv: {
-    maxHeight: 250,
+    maxHeight: 500,
     overflow: "hidden"
   },
 
