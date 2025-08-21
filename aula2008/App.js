@@ -5,9 +5,6 @@ export default function App() {
   return (
     <SafeAreaView style={estilos.tela}>
       <View style={estilos.ajuste}>
-        <Image style={estilos.avatar}
-          source={require('./vaca-saturno-saturnita.jpeg')}
-        />
         <View>
           <Text style={estilos.titulo}>Olá, Estudante</Text>
           <Text style={estilos.subtitulo}>Bem-Vindo ao seu painel</Text>
@@ -76,18 +73,11 @@ const estilos = StyleSheet.create({
     padding: 16,
     backgroundColor: "#ffffffff",
   },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 50  ,
-    marginLeft: 8,
-    marginTop: 5
-  },
   titulo: {
     fontWeight: "900",
     fontSize: 20,
     marginTop: 3,
-    marginBottom: 2,
+    marginBottom: 6,
     marginLeft: 20
   },
   subtitulo: {
