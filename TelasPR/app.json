@@ -1,0 +1,8 @@
+{
+  "name": "TelasPR",
+  "slug": "TelasPR",
+  "plugins": [
+    "expo-router"
+  ],
+  "scheme": "your-app-scheme"
+}

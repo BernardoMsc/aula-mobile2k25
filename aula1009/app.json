@@ -1,0 +1,8 @@
+{
+  "name": "aula1009",
+  "slug": "aula1009",
+  "plugins": [
+    "expo-router"
+  ],
+  "scheme": "telas"
+}
