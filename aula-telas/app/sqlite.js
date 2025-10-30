@@ -1,129 +1,106 @@
 import { View, Text, Button, StyleSheet, FlatList, TextInput } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as SQLite from "expo-sqlite";
+import { db, initDb } from "../data/db";
 
-const db = SQLite.openDatabaseSync("despesass.db");
+initDb();
 
-
-db.execSync(`
-  PRAGMA journal_mode = WAL;
-  DROP TABLE IF EXISTS despesas;
-  CREATE TABLE IF NOT EXISTS despesas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    descricao TEXT NOT NULL,
-    valor REAL NOT NULL,
-    categoria TEXT 
-  );
-`);
-
-function getDespesas() {
-  return db.getAllSync("SELECT * FROM despesas ORDER BY id DESC");
+function getTarefas(){
+  return db.getAllSync('SELECT * FROM tarefas');
 }
 
-function insertDespesa(descricao, valor, categoria) {
-  db.runSync(
-    "INSERT INTO despesas (descricao, valor, categoria) VALUES (?, ?, ?)",
-    [descricao, valor, categoria]
-  );
+function insertTarefa(nome){
+  db.runSync('INSERT INTO tarefas (nome) VALUES (?)', [nome]);
 }
 
-function deleteDespesa(id) {
-  db.runSync("DELETE FROM despesas WHERE id = ?", [id]);
+function deleteTarefa(id) {
+  db.runSync('DELETE FROM tarefas WHERE id = ?', [id]);
 }
 
-function deleteAll() {
-  db.runSync("DELETE FROM despesas");
+function getTarefaById(id) {
+  const [tarefa] = db.getAllSync('SELECT * FROM tarefas WHERE id = ?', [id]);
+  return tarefa;
 }
 
-export default function SqliteDespesas() {
-  const [descricao, setDescricao] = useState("");
-  const [valor, setValor] = useState("");
-  const [categoria, setCategoria] = useState("");
-  const [despesas, setDespesas] = useState(getDespesas());
+function updateTarefa(id, nome) {
+  db.runSync('UPDATE tarefas SET nome = ? WHERE id = ?', [nome, id]);
+}
 
-  function salvarDespesa() {
-    const desc = descricao.trim();
-    const val = parseFloat(valor);
-    const cat = categoria.trim() || "Outros";
+export default function sqlite() {
+  const [texto, setTexto] = useState("");
+  const [tarefas, setTarefas] = useState([]);
+  const [editandoId, setEditandoId] = useState(null);
 
-
-    insertDespesa(desc, val, cat);
-    setDescricao("");
-    setValor("");
-    setCategoria("");
-    carregarDespesas();
+  function salvarTarefa() {
+    const nome = texto.trim();
+    if (!nome) return;
+    insertTarefa(nome);
+    setTexto("");
   }
 
-  function carregarDespesas() {
-    setDespesas(getDespesas());
+  function carregarTarefas() {
+    setTarefas(getTarefas());
   }
 
-  function removerDespesa(id) {
-    deleteDespesa(id);
-    carregarDespesas();
+  function excluirTarefa(id) {
+    deleteTarefa(id);
+    carregarTarefas();
   }
 
-  function limparTudo() {
-    deleteAll();
-    carregarDespesas();
+  function editarTarefa(id) {
+    const tarefa = getTarefaById(id);
+    if (!tarefa) return;
+    setTexto(tarefa.nome);
+    setEditandoId(id);
   }
 
-  const total = despesas.reduce((soma, d) => soma + d.valor, 0);
+  function atualizarTarefa() {
+    const nome = texto.trim();
+    if (!nome || !editandoId) return;
+    updateTarefa(editandoId, nome);
+    setTexto("");
+    setEditandoId(null);
+    carregarTarefas();
+  }
+
+  // Carrega as tarefas quando a tela abre
+  useEffect(() => {
+    // Executa uma única vez após o primeiro render
+    carregarTarefas();
+  }, []);
+
 
   return (
     <SafeAreaView style={estilos.container}>
-      <Text style={estilos.titulo}>Despesas</Text>
+      <Text style={estilos.titulo}>Tarefas</Text>
 
       <View style={estilos.linhaEntrada}>
         <TextInput
-          value={descricao}
-          onChangeText={setDescricao}
-          placeholder="Descrição..."
+          value={texto}
+          onChangeText={setTexto}
+          placeholder="Nova tarefa..."
           style={estilos.campoTexto}
         />
+        <Button title="Salvar" onPress={salvarTarefa} disabled={!!editandoId} /> /* converte para boolean */
+        <Button title="Atualizar" onPress={atualizarTarefa} disabled={!editandoId} />
       </View>
 
-      <View style={estilos.linhaEntrada}>
-        <TextInput
-          value={valor}
-          onChangeText={setValor}
-          placeholder="Valor"
-          keyboardType="numeric"
-          style={estilos.campoTexto}
-        />
-      </View>
-
-      <View style={estilos.linhaEntrada}>
-        <TextInput
-          value={categoria}
-          onChangeText={setCategoria}
-          placeholder="Categoria"
-          style={estilos.campoTexto}
-        />
-      </View>
-
-      <View style={estilos.linhaEntrada}>
-        <Button title="Salvar" onPress={salvarDespesa} />
-        <Button title="Carregar" onPress={carregarDespesas} />
-        <Button title="Apagar todas" onPress={limparTudo} />
-      </View>
+      <Button title="Carregar tarefas" onPress={carregarTarefas} />
 
       <FlatList
-        data={despesas}
+        data={tarefas}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
-          <View style={estilos.item}>
-            <Text style={estilos.textoItem}>
-              {item.descricao} - R$ {item.valor.toFixed(2)} [{item.categoria}]
-            </Text>
-            <Button title="X" onPress={() => removerDespesa(item.id)} />
+          <View style={estilos.itemLinha}>
+            <Text style={estilos.textoItem}>- {item.nome}</Text>
+            <View style={estilos.acoesLinha}>
+              <Button title="E" onPress={() => editarTarefa(item.id)} />
+              <Button title="x" color="#b91c1c" onPress={() => excluirTarefa(item.id)} />
+            </View>
           </View>
         )}
       />
-
-      <Text style={estilos.total}>Total: R$ {total.toFixed(2)}</Text>
 
       <View style={estilos.rodape}>
         <Button title="Voltar" onPress={() => router.back()} />
@@ -134,13 +111,20 @@ export default function SqliteDespesas() {
 }
 
 const estilos = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
-  titulo: { fontSize: 18, fontWeight: "600", marginBottom: 8 },
-  linhaEntrada: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-    gap: 8,
+  container: { 
+    flex: 1, 
+    padding: 16 
+  },
+  titulo: { 
+    fontSize: 18, 
+    fontWeight: "600", 
+    marginBottom: 8 
+  },
+  linhaEntrada: { 
+    flexDirection: "row", 
+    alignItems: "center", 
+    marginBottom: 8, 
+    gap: 8 
   },
   campoTexto: {
     flex: 1,
@@ -150,23 +134,24 @@ const estilos = StyleSheet.create({
     paddingHorizontal: 12,
     height: 44,
   },
-  item: {
+  textoItem: { 
+    fontSize: 16, 
+    paddingVertical: 6 
+  },
+  itemLinha: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 6,
+    justifyContent: "space-between",
+    paddingVertical: 4,
   },
-  textoItem: {
-    fontSize: 16
-  },
-  total: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 12
-  },
-  rodape: {
+  acoesLinha: {
     flexDirection: "row",
-    gap: 8,
-    marginTop: 12
-  }
-})
+    gap: 4,
+  },
+  rodape: { 
+    flexDirection: "row", 
+    gap: 8, 
+    marginTop: 8 
+  },
+});
+
